@@ -4,7 +4,7 @@ import '../providers/products.dart';
 import 'package:provider/provider.dart';
 
 class ProductsGrid extends StatelessWidget {
-  bool _showOnlyFav;
+  final bool _showOnlyFav;
   ProductsGrid(this._showOnlyFav);
   @override
   Widget build(BuildContext context) {

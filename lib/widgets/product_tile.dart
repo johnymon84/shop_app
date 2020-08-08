@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../providers/product.dart';
 import '../screens/product_detail_screen.dart';
 import 'package:provider/provider.dart';
-import '../widgets/badge.dart';
 import '../providers/cart.dart';
 
 class ProductTile extends StatelessWidget {
@@ -53,6 +52,16 @@ class ProductTile extends StatelessWidget {
               ),
               onPressed: () {
                 cart.addItem(product.id, product.title, product.price);
+                Scaffold.of(context).hideCurrentSnackBar();
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text('Item Added'),
+                  duration: Duration(seconds: 2),
+                  action: SnackBarAction(
+                      label: 'Undo',
+                      onPressed: () {
+                        cart.removeSingleItem(product.id);
+                      }),
+                ));
               }),
         ),
       ),

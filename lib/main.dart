@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import './providers/cart.dart';
 import './screens/cart_screen.dart';
 import './screens/order_screen.dart';
+import './screens/user_product_screen.dart';
+import './screens/edited_product_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -30,6 +32,8 @@ class MyApp extends StatelessWidget {
           ProductDetailScreen.routePage: (ctx) => ProductDetailScreen(),
           CartScreen.routePage: (ctx) => CartScreen(),
           OrderScreen.routePage: (ctx) => OrderScreen(),
+          UserProductScreen.routePage: (ctx) => UserProductScreen(),
+          EditedProductScreen.routePage: (ctx) => EditedProductScreen(),
         },
       ),
     );

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../screens/order_screen.dart';
 import '../screens/cart_screen.dart';
 import 'package:shop_app/widgets/badge.dart';
 import '../widgets/products_grid.dart';
 import '../providers/cart.dart';
 import 'package:provider/provider.dart';
+import '../widgets/app_drawer.dart';
 
 enum dropMenuFilter { Favourites, All }
 
@@ -19,34 +19,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   Widget build(BuildContext context) {
     //final cart = Provider.of<Cart>(context, listen: true);
     return Scaffold(
-      drawer: Drawer(
-          child: ListView(
-        children: <Widget>[
-          DrawerHeader(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Shopping app',
-                  style: TextStyle(fontSize: 30),
-                ),
-              ],
-            ),
-            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-          ),
-          ListTile(
-            leading: Icon(Icons.featured_play_list),
-            title: Text(
-              'Orders',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            onTap: () {
-              Navigator.of(context).pushNamed(OrderScreen.routePage);
-            },
-          ),
-        ],
-      )),
+      drawer: AppDrawer(),
       appBar: AppBar(
         title: Text('Shopping App'),
         actions: <Widget>[

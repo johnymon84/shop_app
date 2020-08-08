@@ -14,6 +14,29 @@ class CartTile extends StatelessWidget {
     return Dismissible(
       key: ValueKey(productId),
       direction: DismissDirection.endToStart,
+      confirmDismiss: (direction) {
+        return showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('Are you sure'),
+            content: Text('You want to remove the product from the cart'),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop(false);
+                },
+                child: Text('No'),
+              ),
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop(true);
+                },
+                child: Text('Yes'),
+              ),
+            ],
+          ),
+        );
+      },
       background: Container(
         margin: EdgeInsets.symmetric(
           horizontal: 15.0,
@@ -46,7 +69,7 @@ class CartTile extends StatelessWidget {
             title: Text(title),
             subtitle: Text('Total : \$${(price * quantity)}'),
             trailing: Text(
-              '${quantity} X',
+              '$quantity X',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
