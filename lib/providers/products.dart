@@ -65,9 +65,9 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) {
     const remoteURl = 'https://shop-app-d9611.firebaseio.com/product.json';
-    http
+    return http
         .post(
       remoteURl,
       body: json.encode({
