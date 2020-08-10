@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'product.dart';
+import './product.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
   List<Product> _items = [
@@ -10,7 +12,6 @@ class Products with ChangeNotifier {
       price: 29.99,
       imageUrl:
           'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg',
-      isFavourite: false,
     ),
     Product(
       id: 'p2',
@@ -19,7 +20,6 @@ class Products with ChangeNotifier {
       price: 59.99,
       imageUrl:
           'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Trousers%2C_dress_%28AM_1960.022-8%29.jpg/512px-Trousers%2C_dress_%28AM_1960.022-8%29.jpg',
-      isFavourite: false,
     ),
     Product(
       id: 'p3',
@@ -28,7 +28,6 @@ class Products with ChangeNotifier {
       price: 19.99,
       imageUrl:
           'https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg',
-      isFavourite: false,
     ),
     Product(
       id: 'p4',
@@ -37,30 +36,75 @@ class Products with ChangeNotifier {
       price: 49.99,
       imageUrl:
           'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
-      isFavourite: false,
     ),
   ];
+  // var _showFavoritesOnly = false;
+
   List<Product> get items {
+    // if (_showFavoritesOnly) {
+    //   return _items.where((prodItem) => prodItem.isFavorite).toList();
+    // }
     return [..._items];
   }
 
-  List<Product> get favouriteItems {
-    return items.where((element) => element.isFavourite == true).toList();
+  List<Product> get favoriteItems {
+    return _items.where((prodItem) => prodItem.isFavorite).toList();
   }
 
-  Product getItemById(String id) {
-    return items.firstWhere((pro) => pro.id == id);
+  Product findById(String id) {
+    return _items.firstWhere((prod) => prod.id == id);
   }
+
+  // void showFavoritesOnly() {
+  //   _showFavoritesOnly = true;
+  //   notifyListeners();
+  // }
+
+  // void showAll() {
+  //   _showFavoritesOnly = false;
+  //   notifyListeners();
+  // }
 
   void addProduct(Product product) {
-    // print('here');
-    final newProduct = Product(
-        id: DateTime.now().toString(),
+    const remoteURl = 'https://shop-app-d9611.firebaseio.com/product.json';
+    http
+        .post(
+      remoteURl,
+      body: json.encode({
+        'title': product.title,
+        'description': product.description,
+        'price': product.price,
+        'imageUrl': product.imageUrl,
+        'isFavourite': product.isFavorite,
+      }),
+    )
+        .then((response) {
+      print(response.statusCode);
+      final newProduct = Product(
         title: product.title,
         description: product.description,
         price: product.price,
-        imageUrl: product.imageUrl);
-    _items.insert(0, newProduct);
+        imageUrl: product.imageUrl,
+        id: json.decode(response.body)['name'],
+      );
+      _items.add(newProduct);
+      notifyListeners();
+    });
+    // _items.insert(0, newProduct); // at the start of the list
+  }
+
+  void updateProduct(String id, Product newProduct) {
+    final prodIndex = _items.indexWhere((prod) => prod.id == id);
+    if (prodIndex >= 0) {
+      _items[prodIndex] = newProduct;
+      notifyListeners();
+    } else {
+      print('...');
+    }
+  }
+
+  void deleteProduct(String id) {
+    _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
   }
 }

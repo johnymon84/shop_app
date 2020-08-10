@@ -1,36 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../screens/edit_product_screen.dart';
+import '../providers/products.dart';
 
 class UserProductItem extends StatelessWidget {
-  final String imageUrl;
+  final String id;
   final String title;
-  UserProductItem(this.imageUrl, this.title);
+  final String imageUrl;
+
+  UserProductItem(this.id, this.title, this.imageUrl);
+
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListTile(
-          title: Text(title),
-          leading: CircleAvatar(
-            backgroundImage: NetworkImage(imageUrl),
-            radius: 30,
-          ),
-          trailing: Container(
-            width: 100,
-            child: Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {},
-                ),
-              ],
+    return ListTile(
+      title: Text(title),
+      leading: CircleAvatar(
+        backgroundImage: NetworkImage(imageUrl),
+      ),
+      trailing: Container(
+        width: 100,
+        child: Row(
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                Navigator.of(context).pushNamed(EditProductScreen.routeName, arguments: id);
+              },
+              color: Theme.of(context).primaryColor,
             ),
-          ),
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () {
+                Provider.of<Products>(context, listen: false).deleteProduct(id);
+              },
+              color: Theme.of(context).errorColor,
+            ),
+          ],
         ),
       ),
     );

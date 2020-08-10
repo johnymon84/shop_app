@@ -3,9 +3,15 @@ import 'package:flutter/foundation.dart';
 class CartItem {
   final String id;
   final String title;
-  final double price;
   final int quantity;
-  CartItem(this.id, this.title, this.price, this.quantity);
+  final double price;
+
+  CartItem({
+    @required this.id,
+    @required this.title,
+    @required this.quantity,
+    @required this.price,
+  });
 }
 
 class Cart with ChangeNotifier {
@@ -19,30 +25,46 @@ class Cart with ChangeNotifier {
     return _items.length;
   }
 
-  double get cartTotal {
-    double total = 0.0;
-    _items.forEach((key, value) {
-      total += value.price * value.quantity;
+  double get totalAmount {
+    var total = 0.0;
+    _items.forEach((key, cartItem) {
+      total += cartItem.price * cartItem.quantity;
     });
     return total;
   }
 
-  void addItem(String id, String title, double price) {
-    if (_items.containsKey(id)) {
+  void addItem(
+    String productId,
+    double price,
+    String title,
+  ) {
+    if (_items.containsKey(productId)) {
+      // change quantity...
       _items.update(
-          id,
-          (value) =>
-              CartItem(value.id, value.title, value.price, value.quantity + 1));
-    } else
+        productId,
+        (existingCartItem) => CartItem(
+              id: existingCartItem.id,
+              title: existingCartItem.title,
+              price: existingCartItem.price,
+              quantity: existingCartItem.quantity + 1,
+            ),
+      );
+    } else {
       _items.putIfAbsent(
-          id, () => CartItem(DateTime.now().toString(), title, price, 1));
-
+        productId,
+        () => CartItem(
+              id: DateTime.now().toString(),
+              title: title,
+              price: price,
+              quantity: 1,
+            ),
+      );
+    }
     notifyListeners();
   }
 
-  void removeItem(String id) {
-    print('here');
-    _items.remove(id);
+  void removeItem(String productId) {
+    _items.remove(productId);
     notifyListeners();
   }
 
@@ -50,16 +72,18 @@ class Cart with ChangeNotifier {
     if (!_items.containsKey(productId)) {
       return;
     }
-
     if (_items[productId].quantity > 1) {
       _items.update(
           productId,
-          (value) =>
-              CartItem(value.id, value.title, value.price, value.quantity - 1));
+          (existingCartItem) => CartItem(
+                id: existingCartItem.id,
+                title: existingCartItem.title,
+                price: existingCartItem.price,
+                quantity: existingCartItem.quantity - 1,
+              ));
     } else {
       _items.remove(productId);
     }
-
     notifyListeners();
   }
 
