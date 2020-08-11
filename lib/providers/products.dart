@@ -64,21 +64,29 @@ class Products with ChangeNotifier {
   //   _showFavoritesOnly = false;
   //   notifyListeners();
   // }
+  Future<void> fetchItems() async {
+    const url = "https://shop-app-d9611.firebaseio.com/product.json";
+    try {
+      final response = await http.get(url);
+      print(jsonDecode(response.body));
+    } catch (error) {
+      print('There was an error');
+    }
+  }
 
-  Future<void> addProduct(Product product) {
+  Future<void> addProduct(Product product) async {
     const remoteURl = 'https://shop-app-d9611.firebaseio.com/product.json';
-    return http
-        .post(
-      remoteURl,
-      body: json.encode({
-        'title': product.title,
-        'description': product.description,
-        'price': product.price,
-        'imageUrl': product.imageUrl,
-        'isFavourite': product.isFavorite,
-      }),
-    )
-        .then((response) {
+    try {
+      final response = await http.post(
+        remoteURl,
+        body: json.encode({
+          'title': product.title,
+          'description': product.description,
+          'price': product.price,
+          'imageUrl': product.imageUrl,
+          'isFavourite': product.isFavorite,
+        }),
+      );
       print(response.statusCode);
       final newProduct = Product(
         title: product.title,
@@ -89,7 +97,11 @@ class Products with ChangeNotifier {
       );
       _items.add(newProduct);
       notifyListeners();
-    });
+    } catch (error) {
+      print(error);
+      throw Error;
+    }
+
     // _items.insert(0, newProduct); // at the start of the list
   }
 
